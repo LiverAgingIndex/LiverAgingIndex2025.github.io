@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肝脏衰老风险评估</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="language-switch">
+            <button onclick="changeLanguage('en')">EN</button>
+            <button onclick="changeLanguage('zh')">中文</button>
+        </div>
+
+        <div class="header">
+            <h1 data-i18n="title">Liver Aging Assessment</h1>
+            <p data-i18n="subtitle">Liver Aging Acceleration (LAA) and Liver Age Index (LAI) Calculator</p>
+        </div>
+
+        <!-- 模型选择 -->
+        <div class="model-selection">
+            <div class="model-btn active" data-model="lai5" data-i18n="lai5_model">LAI-5 Model</div>
+            <div class="model-btn" data-model="lai13" data-i18n="lai13_model">LAI-13 Model</div>
+        </div>
+
+        <!-- 性别选择 -->
+        <div class="gender-selection">
+            <div class="gender-btn active" data-gender="male" data-i18n="male">Male</div>
+            <div class="gender-btn" data-gender="female" data-i18n="female">Female</div>
+        </div>
+
+        <!-- 表单区域 -->
+        <form id="health-form">
+            <div class="form-container">
+                <!-- 左列 - 基本信息 -->
+                <div class="form-column">
+                    <h3 data-i18n="basic_info">Basic Information</h3>
+                    <div class="form-group">
+                        <label for="age" data-i18n="age">Chronological Age (CA, years)</label>
+                        <input type="number" id="age" min="18" max="120" step="1" required>
+                    </div>
+                    
+                    <!-- LAI-5 特定字段 -->
+                    <div class="form-group lai5-only">
+                        <label for="fap" data-i18n="fap">Fat Attenuation Parameter (FAP, dB/m)</label>
+                        <input type="number" id="fap" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group lai5-only">
+                        <label for="lsm" data-i18n="lsm">Liver Stiffness Measurement (LSM, kPa)</label>
+                        <input type="number" id="lsm" min="0" step="0.01">
+                    </div>
+                    
+                    <!-- LAI-13 特定字段 -->
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="bmi" data-i18n="bmi">Body Mass Index (BMI)</label>
+                        <input type="number" id="bmi" min="10" max="50" step="0.1">
+                    </div>
+                    
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="sbp" data-i18n="sbp">Systolic Blood Pressure (SBP, mmHg)</label>
+                        <input type="number" id="sbp" min="0" step="1">
+                    </div>
+                    
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="dbp" data-i18n="dbp">Diastolic Blood Pressure (DBP, mmHg)</label>
+                        <input type="number" id="dbp" min="0" step="1">
+                    </div>
+                </div>
+
+                <!-- 右列 - 检查指标 -->
+                <div class="form-column">
+                    <h3 data-i18n="test_indicators">Test Indicators</h3>
+                    <div class="form-group">
+                        <label for="alt" data-i18n="alt">Alanine Aminotransferase (ALT, U/L)</label>
+                        <input type="number" id="alt" min="0" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ast" data-i18n="ast">Aspartate Aminotransferase (AST, U/L)</label>
+                        <input type="number" id="ast" min="0" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ggt" data-i18n="ggt">Gamma-Glutamyl Transferase (GGT, U/L)</label>
+                        <input type="number" id="ggt" min="0" step="0.01" required>
+                    </div>
+                    
+                    <!-- LAI-13 特定字段 -->
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="rpg" data-i18n="rpg">Random Plasma Glucose (RPG, mg/dL)</label>
+                        <input type="number" id="rpg" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="tc" data-i18n="tc">Total Cholesterol (TC, mg/dL)</label>
+                        <input type="number" id="tc" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="tg" data-i18n="tg">Triglycerides (TG, mg/dL)</label>
+                        <input type="number" id="tg" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="hdl" data-i18n="hdl">High-Density Lipoprotein (HDL, mg/dL)</label>
+                        <input type="number" id="hdl" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group lai13-only" style="display: none;">
+                        <label for="ldl" data-i18n="ldl">Low-Density Lipoprotein (LDL, mg/dL)</label>
+                        <input type="number" id="ldl" min="0" step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="calculate-btn" data-i18n="calculate">Calculate LAA & LAI</button>
+                <button type="button" class="reset-btn" onclick="resetForm()" data-i18n="reset">Reset</button>
+            </div>
+        </form>
+
+        <!-- 结果展示 -->
+        <div class="result-box">
+            <h3 data-i18n="result_title">Liver Aging Assessment Result</h3>
+            <div class="result-display">
+                <div class="result-item">
+                    <span data-i18n="chronological_age">Chronological Age (CA):</span>
+                    <span id="ca-result" class="result-value">0</span> <span data-i18n="years">years</span>
+                </div>
+                <div class="result-item">
+                    <span data-i18n="laa">Liver Aging Acceleration (LAA):</span>
+                    <span id="laa-result" class="result-value">0.00</span>
+                </div>
+                <div class="result-item">
+                    <span data-i18n="lai">Liver Age Index (LAI):</span>
+                    <span id="lai-result" class="result-value">0.00</span> <span data-i18n="years">years</span>
+                </div>
+                <div id="risk-description" class="risk-description" data-i18n="waiting_calculation">Please fill in information and click calculate</div>
+            </div>
+            
+            <div class="threshold-info">
+                <h4 data-i18n="threshold_title">Assessment Thresholds (based on 25th/75th percentiles)</h4>
+                <div id="threshold-details" data-i18n="threshold_details">
+                    LAA-5: ≤ -1.19 (slowed aging), ≥ 1.11 (accelerated aging)<br>
+                    LAA-13: ≤ -1.13 (slowed aging), ≥ 0.96 (accelerated aging)
+                </div>
+            </div>
+        </div>
+
+        <!-- 免责声明 -->
+        <div class="disclaimer-box">
+            <h4 data-i18n="disclaimer_title">Important Notice</h4>
+            <ul>
+                <li data-i18n="disclaimer_1">This tool provides liver aging assessment based on statistical models and should not replace professional medical advice.</li>
+                <li data-i18n="disclaimer_2">Calculation results may vary with individual health conditions and laboratory methods.</li>
+                <li data-i18n="disclaimer_3">We do not store any user input data.</li>
+                <li data-i18n="disclaimer_4">Helped by AI, developed reference: 2025.Liver Aging Index: a non-invasive score for liver biological aging and liver-related outcomes in multi-cohorts. </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
